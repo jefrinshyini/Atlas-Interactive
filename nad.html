@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Country Details</title>
+
+  <style>
+    body{
+      background:#0d1117;
+      color:#e6edf3;
+      font-family:Consolas, monospace;
+      font-weight:bold;
+      font-style:italic;
+      text-align:center;
+      margin:0;
+      padding:0;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 40px;
+      background:#9ecbff;
+      border-bottom:2px solid #58a6ff;
+    }
+
+    .header h1{
+      margin:0;
+      color:#000;
+      font-style:normal;
+      font-size:26px;
+    }
+
+    .btn-group a{
+      padding:6px 12px;
+      background:#fff;
+      color:#000;
+      border:1px solid #000;
+      border-radius:6px;
+      text-decoration:none;
+      font-weight:bold;
+      margin-left:8px;
+    }
+
+    .btn-group a:hover{
+      background:#000;
+      color:#9ecbff;
+    }
+
+    .box{
+      width:750px;
+      margin:40px auto;
+      padding:25px;
+      border:1px solid #58a6ff;
+      border-radius:10px;
+      box-shadow:0 0 15px #58a6ff;
+    }
+
+    select{
+      padding:8px 12px;
+      margin:10px;
+      background:#0d1117;
+      color:#58a6ff;
+      border:1px solid #58a6ff;
+      font-weight:bold;
+    }
+
+    input{
+      margin:8px;
+    }
+
+    button{
+      padding:8px 14px;
+      margin:6px;
+      background:#0d1117;
+      color:#58a6ff;
+      border:1px solid #58a6ff;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#58a6ff;
+      color:#0d1117;
+    }
+
+    img{
+      width:40%;
+      margin:10px;
+      border-radius:8px;
+      border:1px solid #58a6ff;
+    }
+
+    table{
+      width:85%;
+      margin:20px auto;
+      border-collapse:collapse;
+    }
+
+    th,td{
+      border:1px solid #58a6ff;
+      padding:10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1 id="title">Country</h1>
+    <div class="btn-group">
+      <a href="nac.html">Previous</a>
+      <a href="index.php">Home</a>
+    </div>
+  </div>
+
+  <div class="box">
+
+<select id="country" onchange="updateTitle()">
+  <option value="">Select Country</option>
+  <option value="usa">USA</option>
+  <option value="canada">Canada</option>
+</select>
+
+
+    <br><br>
+
+    <input type="checkbox" id="img"> Images<br>
+    <input type="checkbox" id="food"> Food<br>
+    <input type="checkbox" id="culture"> Culture<br>
+    <input type="checkbox" id="table"> Table<br><br>
+
+    <button onclick="showInfo()">Show Info</button>
+
+    <div id="output"></div>
+
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateTitle(){
+  var c = $("#country option:selected").text();
+  $("h1").text(c ? c.toUpperCase() : "Select a Country");
+
+}
+
+
+  function showInfo(){
+    var country = $("#country").val();
+    if(!country){
+      $("#output").html("<p>Please select a country first.</p>");
+      return;
+    }
+
+    // Collect selected checkboxes
+    var details = [];
+    $("input[type=checkbox]:checked").each(function(){
+      details.push($(this).attr("id"));
+    });
+
+    // AJAX call to backend
+    $.ajax({
+      url: "get_country.php",
+      type: "POST",
+      data: { country: country, details: details },
+      success: function(response){
+        $("#output").html(response);
+      },
+      error: function(){
+        $("#output").html("<p style='color:red;'>Error fetching details.</p>");
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

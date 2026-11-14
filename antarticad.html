@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Antarctica Details</title>
+
+  <style>
+    body{
+      background:#0d1117;
+      color:#e6edf3;
+      font-family:Consolas, monospace;
+      font-weight:bold;
+      font-style:italic;
+      text-align:center;
+      margin:0;
+      padding:0;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 40px;        
+      background:#9ecbff;
+      border-bottom:2px solid #58a6ff;
+    }
+
+    .header h1{
+      margin:0;
+      color:#000000;
+      font-style:normal;
+      font-size:26px;
+    }
+
+    .header .btn-group{
+      display:flex;
+      gap:10px;
+    }
+
+    .header .btn-group a{
+      padding:6px 12px;           
+      background:#ffffff;
+      color:#000000;
+      border:1px solid #000000;
+      border-radius:6px;
+      font-family:Consolas, monospace;
+      font-weight:bold;
+      text-decoration:none;
+      cursor:pointer;
+      font-size:14px;
+    }
+
+    .header .btn-group a:hover{
+      background:#000000;
+      color:#9ecbff;
+    }
+
+    .box{
+      width:750px;
+      margin:40px auto;
+      padding:25px;
+      border:1px solid #58a6ff;
+      border-radius:10px;
+      box-shadow:0 0 15px #58a6ff;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:20px;
+    }
+
+    .left-section{
+      flex:1 1 300px;
+      text-align:center;
+    }
+
+    .right-section{
+      flex:1 1 350px;
+      text-align:left;
+    }
+
+    input[type=checkbox]{
+      margin:8px;
+      cursor:pointer;
+    }
+
+    button{
+      padding:8px 14px;
+      margin:6px;
+      background:#0d1117;
+      color:#58a6ff;
+      border:1px solid #58a6ff;
+      font-family:Consolas, monospace;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#58a6ff;
+      color:#0d1117;
+    }
+
+    img{
+      width:90%;
+      max-width:300px;
+      margin:10px;
+      border-radius:8px;
+      border:1px solid #58a6ff;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+    }
+
+    th,td{
+      border:1px solid #58a6ff;
+      padding:10px;
+      text-align:center;
+    }
+
+    .info-text{
+      margin:10px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>Antarctica</h1>
+    <div class="btn-group">
+      <a href="index.php">Home</a>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="left-section">
+      <h3>Antarctica Map</h3>
+      <img src="https://cdn.britannica.com/37/5737-050-8C31CF91/Map-Antarctica-regions-ice-sheets-research-stations.jpg" alt="Antarctica Map">
+      <p class="info-text">Antarctica has no countries. It is managed internationally through the Antarctic Treaty System to preserve peace, science, and environment.</p>
+    </div>
+
+    <div class="right-section">
+  <h3>Select Country</h3>
+  <select id="country" onchange="updateTitle()">
+    <option value="">Select Country</option>
+    <option value="research">Research Stations</option>
+    <option value="penguinland">Penguin Land</option>
+  </select>
+
+  <br><br>
+
+  <input type="checkbox" id="img"> Images<br>
+  <input type="checkbox" id="food"> Food<br>
+  <input type="checkbox" id="culture"> Culture<br>
+  <input type="checkbox" id="table"> Table<br><br>
+
+  <button onclick="showInfo()">Show Info</button>
+  <div id="output"></div>
+</div>
+
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateTitle(){
+  var c = $("#country option:selected").text();
+  $("h1").text(c ? c.toUpperCase() : "Select a Country");
+
+}
+
+
+  function showInfo(){
+    var country = $("#country").val();
+    if(!country){
+      $("#output").html("<p>Please select a country first.</p>");
+      return;
+    }
+
+    var details = [];
+    $("input[type=checkbox]:checked").each(function(){
+      details.push($(this).attr("id"));
+    });
+
+    $.ajax({
+      url: "get_country.php",
+      type: "POST",
+      data: { country: country, details: details },
+      success: function(response){
+        $("#output").html(response);
+      },
+      error: function(){
+        $("#output").html("<p style='color:red;'>Error fetching details.</p>");
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
